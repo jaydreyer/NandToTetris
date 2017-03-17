@@ -80,3 +80,5 @@ Circuit Implementation
 * VHDL and Verilog are popular HDLs
 
 ### Unit 1.6: Multi-bit Buses
+Sometimes bits are manipulated together as an array
+We call these  groups of bits a "bus"
