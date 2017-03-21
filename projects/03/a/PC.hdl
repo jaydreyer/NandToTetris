@@ -16,5 +16,18 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    //Increment the register, with whatever it's supposed to be incremented by
+    Inc16(in=increment, out=counter);
+
+    //Time to check the three other rules above in the comments
+
+    //The previous counter...
+    Mux16(a=increment, b=counter, sel=inc, out = out1);
+    //Increment using the in and load...
+    Mux16(a=out1, b=in, sel=load, out=out2);
+    //Zero the counter b/c reset...
+    Mux16(a=out2, b=false, sel=reset, out=out0);
+
+    //Update the register and send data back to the incrementor
+    Register(in = out0, load = true, out = out, out = increment);
 }

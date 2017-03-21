@@ -177,4 +177,50 @@ Full-Adder: Can be built from 2 half-adders
 
 ALU - Holy shit.
 * Building blocks: Add16, and various chips built in project 1
-* Can be built with less than 20 lines of HDL code 
+* Can be built with less than 20 lines of HDL code
+
+## Week 3
+### Chapter 3 - Sequential Logic
+The chips we made earlier were combinational. They compute functions based solely on combinations of their input values. They don't maintain state, however.
+
+The implementation of memory chips involves synchronization, clocking and feedback loops. Most of this is embedded in low-level sequential gate called a **flip-flop**.
+
+**Clock** - Delivers continuous train of alternating signals: 0-1 or low-high, or tick-tock. Time between a tick and a tock is called a *cycle*. Each cycle = one discrete time unit.
+
+**Flip-Flops** - We will use a DFF (Data flip-flop). Interface consists of single-bit data input and single-bit data output. Also a single-bit clock input that constantly changes based on the **clock**. out(t) = in(t-1). In and out are the gate's input and output values and t is the current clock cycle. DFF outputs the input value from the previous time unit.
+
+**Registers** - Stores a value over time. To do this, need a mux. Set the load bit=1 to load new data, otherwise keep loading what is already there.
+
+**Memories** - Stack together registers to form memory banks of arbitrary length. Stack many to form RAM. RAM accepts three inputs: a data input, an address input, and a load bit. The design parameters of RAM are *width* - the width of each one of the words, and its *size* - the number of words in the RAM. Modern computers use 32 or 64 bit wide RAMs whose sizes are up to hundreds of millions.
+
+**Counters** - Sequential chip whose state is an integer number that increments every time unit. out(t) = out(t-1) + c, c usually = 1.
+
+Three possible settings:
+1. Reset: Fetch the first instruction
+2. Next: Fetch the next instruction
+3. Goto: Fetch instruction n
+
+**Time Matters** - Sequential chips embed one or more DFF gates sandwiched between optional combinational logic layers.
+
+> All we have to do is ensure, when we build the computer’s clock, that the length of the clock cycle will be slightly longer that the time it takes a bit to travel the longest distance from one chip in the architecture to another. This way, we are guaranteed that by the time the sequential chip updates its state (at the beginning of the next clock cycle), the inputs that it receives from the ALU will be valid. This, in a nutshell, is the trick that synchronizes a set of stand-alone hardware components into a well-coordinated system
+
+**RAM Unit**
+RAM is a sequence of *n* addressable registers, with addresses 0 to n-1
+
+At any given point of time, only *one* register in the RAM is selected
+
+k = width of the address input. $k=log2n$
+
+**Implementation Tips**
+- RAM device can be built by grouping smaller RAM parts together
+- The RAM's address input is two fields:
+  - One field selects the RAM parts
+  - The other field can be used to select a register within that RAM part.
+- Use mux/demux to effect addressing scheme
+
+PC (Program Counter)
+- Set to 0
+- Set to n
+- Start counting
+- Stop counting
+- Can be built from a register, an incrementor, and some logic gates
