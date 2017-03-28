@@ -224,3 +224,111 @@ PC (Program Counter)
 - Start counting
 - Stop counting
 - Can be built from a register, an incrementor, and some logic gates
+
+## Week 4 - Machine Language
+A *machine language* is designed to manipulate a *memory* using a *processor* and a set of *registers*
+
+**Memory** continuous array of cells of fixed width (words or locations) each having a unique address
+
+**Processor** Performs fixed set of elementary operations - arithmetic, logic, memory access, and control (branching) operations. Work in binary with registers and memory.
+
+**Registers** Most processors have registers that serve as high speed local memory and hold a single value. Registers are faster than memory access
+
+Symbolic notation = Assembly language. So...
+* Use a text program to parse symbolic commands in mnemonics and operands
+* Translate each field into the equivalent binary
+* Assemble codes into binary machine instructions
+
+The program that translates from assembly to binary is called an *assembler*
+
+All machine languages support the following generic commands:
+* **Arithmetic and Logic Operations** Addition, subtraction and basic boolean operations like bit-wise negation, shifting, etc. Commands start on left: ADD R2,R1,R3 would add the registers 1 and 3 and put value into R2.
+* ** Memory Access** Usually 3 modes:
+  * *Direct Addressing* LOAD R1,67 // R1 <- Memory[67]
+  * *Immediate Addressing* Used to load constants. Instead of using address, load the numeric value itself: LOADI R1,67 // R1 <- 67
+  * *Indirect Addressing*  GAHHH! The dreaded "pointers"!
+*  ** Flow of Control ** Repetition (loops), conditional (if-then), and subroutine calling. Feature called "jump"
+  * Unconditional jump = specify only the address of the target location
+  * Conditional jump = also has to specify a boolean condition
+
+### Hack Machine Language Spec
+Hack is a Von Neumann platform. 16-bit machine with a CPU, two separate memory modules (1 instruction memory and 1 data memory), and 2 memory mapped I/O devices: a screen and a keyboard.
+
+** Memory **
+Instruction memory and data memory. The instruction memory is loaded like a ROM chip. You load it from a text file
+
+** Registers **
+2 16 bit registers called D and A
+D is used solely to store data values
+A can store data and addresses
+
+** A Instruction **
+@value
+value can either be an actual value, or a name: @5 or @i
+  * Provides only way to enter a constant into the computer
+  * Sets the stage for subsequent C instruction designed to manipulate a certain data memory location, by first setting A to the address of that location
+  * Sets the stage for a subsequent C instruction that specifies a jump, by first loading the address of the jump destination to the A register  
+
+Hack syntax requires two commands for every operation involving a memory location
+
+** C Instruction **
+dest=comp;jump
+Either the dest or jump fields may be empty
+If dest is empty, the "=" is omitted
+If jump is empty, the ";" is omitted
+
+**comp** tells the ALU what to compute on the D, A, and M registers. 7 bits can potentially code 128 different functions. We just use 28.
+
+**dest** tells where to store the computed value from ALU
+
+**jump** tells which command to fetch and execute next. The default is the next statement.
+
+  * JGT = out > 0
+  * JEQ = out = 0
+  * JGE = out >= 0
+  * JLT = out < 0
+  * JNE = out != 0
+  * JLE = out <= 0
+  * JMP = Jump
+
+Workhorse of the Hack platform that answers 3 questions:
+  * What to compute
+  * Where to store the computed value
+  * What do do next
+
+** Symbols **
+Three ways:
+  * *Predefined Symbols* A special subset of RAM addresses using the following 3 predefined symbols:
+    * *Virtual Registers* R0 to R15 refer to RAM addresses 0 to 15
+    * *Predefined pointers* SP, LCL, ARG, THIS and THAT refer to RAM addresses 0 to 4.
+    * *I/O Pointers* SCREEN and KBD are base addresses of screen and keyboard memory maps
+  * *Label symbols* User-defined symbols for labeling destinations of goto commands (Xxx). Can only define once and can be called anywhere
+  * *Variable symbols* User-defined symbol Xxx appearing in a program that is not defined elsewhere using the (Xxx) command is a variable and assigned a unique memory address starting at RAM address 16
+
+** Input / Output **
+
+Screen: black and white. 256 rows of 512 pixels per row.
+1 row = 32 "words" of 16 pixels each (32*16=512)
+To set the top left pixel to black:
+@SCREEN
+M=1
+
+Keyboard: When a key is pressed, the ascii code appears in KBD. When no key is pressed, the code 0 appears in KDB
+
+File Formats
+
+Binary code files are stored in text files ending in .hack
+
+Assembly language files are store it text files ending in .asm
+
+** Pointers **
+Variables that store memory addresses like arr and i are called pointers. You need something like A=M.
+"Set the address register to the contents of some memory register"
+
+**Mult**
+Program performing R2 = R0 * R1
+Multiply first two registers of memory and put result in R2
+Use a loop to add up the multiples since there is no multiplication
+
+**Fill**
+Touch any key on keyboard, and the screen blackens completely. Let go and it's white.
