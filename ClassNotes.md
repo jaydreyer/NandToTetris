@@ -332,3 +332,20 @@ Use a loop to add up the multiples since there is no multiplication
 
 **Fill**
 Touch any key on keyboard, and the screen blackens completely. Let go and it's white.
+
+## Week 5
+### The CPU
+CPU is 16-bit
+Three inputs:
+* Data value from data memory (inM). The value to work on. - 16 bit
+* Instruction from instruction memory. The instruction to perform on data value - 16 bit
+* Reset bit from user - 1 bit
+
+Four Outputs:
+* Three to Data Memory:
+  * 16 bit outM - value
+  * 1 bit writeM - yes or no - write to memory
+  * 15 bit addressM - where to store it
+  * 15 bit program counter - address of next instruction to fetch
+
+**Project 5**
